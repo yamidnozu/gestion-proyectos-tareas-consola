@@ -1,0 +1,1 @@
+"Abrir con VSCode" "code ." "VSCode ✅"

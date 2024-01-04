@@ -4,15 +4,32 @@
   "description": "",
   "main": "index.js",
   "type": "module",
-
+  "bin": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "rcedit": "rcedit.exe",
+    "pkg": "pkg index.js   --targets node18-win-x64",
+    "compile": "pkg . --output ./mi-aplicacion.exe",
+    "start": " npm run compile &&  ./mi-aplicacion.exe"
+  },
+  "pkg": {
+    "assets": [
+      "node_modules/**/*"
+    ]
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "inquirer": "^9.2.12",
-    "shelljs": "^0.8.5"
+    "inquirer-autocomplete-prompt": "^3.0.1",
+    "shelljs": "^0.8.5",
+    "table": "^6.8.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.23.7",
+    "@babel/preset-env": "^7.23.7",
+    "pkg": "^5.8.1",
+    "rcedit": "^4.0.1"
   }
 }
