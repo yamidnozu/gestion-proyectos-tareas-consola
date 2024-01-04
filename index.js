@@ -4,9 +4,6 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { exec } from 'child_process';
-
-
-    import { spawn } from 'child_process';
 import os from 'os';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -55,12 +52,12 @@ function readCategories() {
     const categories = categoryFiles.reduce((categories, file) => {
         const categoryName = path.basename(file, '.categorias.txt');
         const items = readFileLines(file).map(parseCategoryLine).filter(Boolean);
-        
+
         categories[categoryName] = items;
         return categories;
     }, {});
 
-    
+
     return categories;
 }
 
@@ -80,7 +77,7 @@ function writeConfig(configs) {
 }
 
 function openProject(project) {
-    
+
     shell.exec(project.command, { cwd: project.path }, () => {
 
     });
@@ -99,7 +96,7 @@ function deleteProject() {
     ]).then(answer => {
         const updatedProjects = projects.filter(p => p !== answer.projectToDelete);
         writeConfig(updatedProjects);
-        
+
         returnToMainMenu();
     });
 }
@@ -124,7 +121,7 @@ function moveProject() {
         const filteredProjects = projects.filter(p => p !== projectToMove);
         filteredProjects.splice(newPosition, 0, projectToMove);
         writeConfig(filteredProjects);
-        
+
         returnToMainMenu();
     });
 }
@@ -156,7 +153,7 @@ function addProject() {
         const configs = readConfig();
         configs.push({ path: projectPath, command: answers.command, name: projectName });
         writeConfig(configs);
-        
+
         returnToMainMenu();
     });
 }
@@ -181,7 +178,7 @@ function addCommand() {
         const commands = readCommandsConfig();
         commands.push({ name: answers.name, command: answers.command, identifier: answers.identifier });
         writeCommandsConfig(commands);
-        
+
         returnToMainMenu();
     });
 }
@@ -216,7 +213,7 @@ function mainMenu() {
             createFileMenu();
         } else if (answer.action === 'Abrir un proyecto') {
             openProjectMenu();
-        } else if (answer.action.startsWith('- ')) {    
+        } else if (answer.action.startsWith('- ')) {
             console.log('--------------');
 
             manageCategory(answer.action.replace('- ', ''));
@@ -232,7 +229,7 @@ function mainMenu() {
                     commandsMenu();
                     break;
                 case 'Salir':
-                    
+
                     break;
             }
         }
@@ -336,7 +333,7 @@ function manageCategory(categoryName) {
     const items = categories[categoryName];
 
     if (!items || items.length === 0) {
-        
+
         returnToMainMenu();
         return;
     }
@@ -361,7 +358,7 @@ function manageCategory(categoryName) {
 
 
 function selectCategoryItemAction(selectedItem, categoryName) {
-    
+
     inquirer.prompt([
         {
             type: 'list',
@@ -376,10 +373,10 @@ function selectCategoryItemAction(selectedItem, categoryName) {
                     if (error) {
                         console.error('Error al abrir el archivo:', error);
                     }
-                    watchFile( selectedItem.path); 
+                    watchFile(selectedItem.path);
                     manageCategory(categoryName); // Volver a la gestión de la categoría
                 });
-                
+
                 break;
             case 'Abrir carpeta':
                 const folderPath = path.dirname(selectedItem.path);
@@ -502,7 +499,7 @@ function openProjectMenu() {
                     }
             });
         } else {
-            
+
             returnToMainMenu();
         }
     });
@@ -592,7 +589,7 @@ function addCategoryItem(categoryName) {
         const categoryFile = path.join(__dirname, `${categoryName}.categorias.txt`);
         const newItem = `"${answers.path}" "${answers.name}"\n`;
         fs.appendFileSync(categoryFile, newItem, 'utf8');
-        
+
         returnToMainMenu();
     });
 }
@@ -616,7 +613,7 @@ function deleteCategoryItem(categoryName) {
     ]).then(answer => {
         const updatedItems = items.filter(item => item.name !== answer.itemToDelete);
         writeCategoryFile(categoryName, updatedItems);
-        
+
         returnToMainMenu();
     });
 }
@@ -642,7 +639,7 @@ function moveCategoryItem(categoryName) {
         const filteredItems = items.filter(item => item.name !== itemToMove);
         filteredItems.splice(newPosition, 0, items.find(item => item.name === itemToMove));
         writeCategoryFile(categoryName, filteredItems);
-        
+
         returnToMainMenu();
     });
 }
@@ -695,7 +692,7 @@ function createFileMenu() {
     ]).then(answer => {
         const fileName = answer.fileName;
         chooseCategoryOrCreateNew(categoryName => {
-            
+
             createFileInCategory(fileName, categoryName);
         });
     });
@@ -711,7 +708,7 @@ function chooseCategoryOrCreateNew(callback) {
             choices: [...Object.keys(categories), 'Crear nueva categoría']
         }
     ]).then(answer => {
-        
+
         if (answer.categoryName === 'Crear nueva categoría') {
             addCategory(() => {
                 chooseCategoryOrCreateNew(callback);
@@ -738,7 +735,7 @@ function createFileInCategory(fileName, categoryName) {
     const newItem = `"${filePath}" "${fileName}"\n`;
     try {
         fs.appendFileSync(categoryFile, newItem, 'utf8');
-        
+
     } catch (error) {
         console.error('Error al escribir en el archivo de categoría:', error);
     }
@@ -778,9 +775,9 @@ function postCreateFileOptions(filePath) {
 
 function openFile(filePath) {
     let command;
-    
 
-    
+
+
 
     switch (os.platform()) {
         case 'win32':
@@ -799,8 +796,8 @@ function openFile(filePath) {
     exec(command, (error) => {
         if (error) {
             console.error('Error al abrir el archivo:', error);
-        }else{
-            watchFile(filePath); 
+        } else {
+            watchFile(filePath);
         }
     });
 }
